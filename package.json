@@ -1,0 +1,28 @@
+{
+  "name": "gmon.link-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grammyjs/conversations": "^1.2.0",
+    "@grammyjs/menu": "^1.2.2",
+    "@grammyjs/runner": "^2.0.3",
+    "@supabase/supabase-js": "^2.45.2",
+    "dotenv": "^16.4.5",
+    "grammy": "^1.29.0",
+    "jsonwebtoken": "^9.0.2",
+    "mime-types": "^2.1.35",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/mime-types": "^2.1.4"
+  }
+}
