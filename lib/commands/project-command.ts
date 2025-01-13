@@ -51,7 +51,7 @@ export function createProjectMenu(bot: Bot<MyContext>, supabase: ActSupabaseClie
 	menu.text("📝 Edit project", async (ctx) => {
 		const userId = ctx.from!.id!;
 
-		const projectId = activeProjectRecord[userId];
+		const projectId = activeProjectRecord.get(userId);
 
 		if (!projectId) {
 			return ctx.reply("No active project");
@@ -63,7 +63,7 @@ export function createProjectMenu(bot: Bot<MyContext>, supabase: ActSupabaseClie
 	menu.text("🖼️ Edit image", async (ctx) => {
 		const userId = ctx.from!.id!;
 
-		const projectId = activeProjectRecord[userId];
+		const projectId = activeProjectRecord.get(userId);
 
 		if (!projectId) {
 			return ctx.reply("No active project");
@@ -75,7 +75,7 @@ export function createProjectMenu(bot: Bot<MyContext>, supabase: ActSupabaseClie
 	menu.text("🎨 Edit sticker", async (ctx) => {
 		const userId = ctx.from!.id!;
 
-		const projectId = activeProjectRecord[userId];
+		const projectId = activeProjectRecord.get(userId);
 
 		if (!projectId) {
 			return ctx.reply("No active project");
@@ -87,7 +87,7 @@ export function createProjectMenu(bot: Bot<MyContext>, supabase: ActSupabaseClie
 	menu.text("🔗 Create a new link", async (ctx) => {
 		const userId = ctx.from!.id!;
 
-		const projectId = activeProjectRecord[userId];
+		const projectId = activeProjectRecord.get(userId);
 
 		if (!projectId) {
 			return ctx.reply("No active project");
@@ -99,7 +99,7 @@ export function createProjectMenu(bot: Bot<MyContext>, supabase: ActSupabaseClie
 	menu.text("🔘 Add/edit button(s)", async (ctx) => {
 		const userId = ctx.from!.id!;
 
-		const projectId = activeProjectRecord[userId];
+		const projectId = activeProjectRecord.get(userId);
 
 		if (!projectId) {
 			return ctx.reply("No active project");
@@ -116,7 +116,7 @@ export function createProjectMenu(bot: Bot<MyContext>, supabase: ActSupabaseClie
 	menu.text("👋 Transfer project", async (ctx) => {
 		const userId = ctx.from!.id!;
 
-		const projectId = activeProjectRecord[userId];
+		const projectId = activeProjectRecord.get(userId);
 
 		if (!projectId) {
 			return ctx.reply("No active project");
@@ -128,7 +128,7 @@ export function createProjectMenu(bot: Bot<MyContext>, supabase: ActSupabaseClie
 	menu.text("🗑️ Delete project", async (ctx) => {
 		const userId = ctx.from!.id!;
 
-		const projectId = activeProjectRecord[userId];
+		const projectId = activeProjectRecord.get(userId);
 
 		if (!projectId) {
 			return ctx.reply("No active project");
@@ -140,13 +140,13 @@ export function createProjectMenu(bot: Bot<MyContext>, supabase: ActSupabaseClie
 	menu.text("🔄 Refresh", async (ctx) => {
 		const userId = ctx.from!.id!;
 
-		const projectId = activeProjectRecord[userId];
+		const projectId = activeProjectRecord.get(userId);
 
 		if (!projectId) {
 			return ctx.reply("No active project");
 		}
-		
-		const messageId = projectMessageIdRecord[userId];
+
+		const messageId = projectMessageIdRecord.get(userId);
 		if (!messageId) {
 			return ctx.reply("No active project message");
 		}
@@ -181,12 +181,12 @@ export async function projectCommand(bot: Bot<MyContext>, supabase: ActSupabaseC
 			return ctx.reply(`❌ Couldn't find project with slug <b>${slug}</b>. Please double check the slug and try again.`, { parse_mode: "HTML" });
 		}
 
-		activeProjectRecord[userId] = project.project_id;
+		activeProjectRecord.set(userId, project.project_id);
 
         const message = await createProjectMessage(project, bot, supabase);
 
 		const msg = await ctx.reply(message, { parse_mode: "HTML", reply_markup: menu, link_preview_options: { is_disabled: true } });
-		projectMessageIdRecord[userId] = msg.message_id;
+		projectMessageIdRecord.set(userId, msg.message_id);
 	});
 
 	bot.command("projects", async (ctx) => {

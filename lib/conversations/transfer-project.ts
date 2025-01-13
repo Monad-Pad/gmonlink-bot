@@ -10,8 +10,8 @@ type MyConversation = Conversation<MyContext>;
 
 export async function transferProject(conversation: MyConversation, ctx: MyContext, supabase: ActSupabaseClient, bot: Bot<MyContext>) {
     const userId = ctx.from?.id!;
-    const projectId = activeProjectRecord[userId];
-    isInConversationRecord[userId] = true
+    const projectId = activeProjectRecord.get(userId);
+    isInConversationRecord.set(userId, true);
 
     if (!projectId) {
         return ctx.reply("No active project");
@@ -37,23 +37,23 @@ export async function transferProject(conversation: MyConversation, ctx: MyConte
 
     const project = await getProjectById(projectId, userId, supabase);
 
-    const lastTransferRequest = lastTransferRequestRecord[forwardedUserId];
+    const lastTransferRequest = lastTransferRequestRecord.get(forwardedUserId);
 
     // once a user accepts a transfer request, the bot should wait 10 minutes before allowing another transfer request
     if (lastTransferRequest && Date.now() - lastTransferRequest.timestamp < 10 * 60 * 1000) {
         return ctx.reply("You must wait at least 10 minutes before requesting another transfer");
     }
-    lastTransferRequestRecord[forwardedUserId] = {
+    lastTransferRequestRecord.set(forwardedUserId, {
         timestamp: Date.now(),
         fromUserId: userId,
-    };
+    });
 
     try {
         await ctx.api.sendMessage(forwardedUserId, `@${ctx.from?.username} wants to transfer project: <b>${project.title}</b> to you.`, { parse_mode: "HTML", reply_markup: { inline_keyboard: [[{ text: "Accept", callback_data: "transfer-project-accept" }], [{ text: "Reject", callback_data: "transfer-project-reject" }]] } });
-        transferProjectRecord[forwardedUserId] = {
+        transferProjectRecord.set(forwardedUserId, {
             projectId: projectId,
             fromUserId: userId,
-        };
+        });
     } catch (error) {
         console.error(error);
         return ctx.reply("I can't send messages to that user. Make sure they've talked to me before.");

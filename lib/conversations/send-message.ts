@@ -5,7 +5,7 @@ export async function sendTipMessage(ctx: Context) {
 	const userId = ctx.from!.id!;
 
 	await ctx.reply("<b>TIP:</b> You can use /cancel to exit this process at any time.", { parse_mode: "HTML" });
-	delete isInConversationRecord[userId];
+	isInConversationRecord.delete(userId);
 
 	return;
 }

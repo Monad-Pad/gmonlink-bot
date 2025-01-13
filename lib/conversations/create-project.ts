@@ -22,7 +22,7 @@ const botToken = process.env.BOT_TOKEN!;
 export async function createProject(conversation: MyConversation, ctx: MyContext, supabase: ActSupabaseClient, bot: Bot<MyContext>) {
 	const userId = ctx.from?.id!;
 	const user = await getUser(userId, supabase, bot);
-	isInConversationRecord[userId] = true
+	isInConversationRecord.set(userId, true);
 
 	await sendTipMessage(ctx);
 
@@ -100,8 +100,8 @@ export async function createProject(conversation: MyConversation, ctx: MyContext
 		throw new Error(insertError?.message);
 	}
 
-	projectRecord[userId] = data;
-	activeProjectRecord[userId] = data.project_id;
+	projectRecord.set(userId, data);
+	activeProjectRecord.set(userId, data.project_id);
 
 	await ctx.api.editMessageText(
 		ctx.chat!.id,

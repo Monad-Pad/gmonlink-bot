@@ -12,7 +12,7 @@ export async function getProjects(userId: number, supabase: ActSupabaseClient) {
         throw error;
     }
 
-    projectRecord[userId] = data;
+    projectRecord.set(userId, data);
 
     return data;
 }

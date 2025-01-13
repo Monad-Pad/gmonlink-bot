@@ -13,7 +13,9 @@ export async function handleCallbacks(bot: Bot<MyContext>, supabase: ActSupabase
     });
     bot.callbackQuery("transfer-project-accept", async (ctx) => {
         const userId = ctx.from!.id!;
-        const { projectId, fromUserId } = transferProjectRecord[userId];
+        const transferProject = transferProjectRecord.get(userId);
+        const projectId = transferProject?.projectId;
+        const fromUserId = transferProject?.fromUserId;
 
         if (!projectId) {
             return ctx.reply("No project to transfer");
@@ -27,25 +29,25 @@ export async function handleCallbacks(bot: Bot<MyContext>, supabase: ActSupabase
             
         } else {
             await ctx.api.editMessageText(userId, message.message_id, "✅ Project transferred");
-            await ctx.api.sendMessage(fromUserId, "✅ Project transfer accepted!");
+            await ctx.api.sendMessage(fromUserId as any, "✅ Project transfer accepted!");
         }
-        delete transferProjectRecord[userId];
+        transferProjectRecord.delete(userId);
     });
     bot.callbackQuery("transfer-project-reject", async (ctx) => {
         const userId = ctx.from!.id!;
-        const { fromUserId } = transferProjectRecord[userId];
+        const fromUserId = transferProjectRecord.get(userId);
 
         if (!fromUserId) {
             return ctx.reply("No project to transfer");
         }
         await ctx.deleteMessage()
         await ctx.reply("❌ Project transfer rejected");
-        await ctx.api.sendMessage(fromUserId, "❌ Project transfer rejected!");
-        delete transferProjectRecord[userId];
+        await ctx.api.sendMessage(fromUserId as any, "❌ Project transfer rejected!");
+        transferProjectRecord.delete(userId);
     });
     bot.callbackQuery("delete-project", async (ctx) => {
         const userId = ctx.from!.id!;
-        const projectId = activeProjectRecord[userId];
+        const projectId = activeProjectRecord.get(userId);
         if (!projectId) {
             return ctx.reply("No active project");
         }
@@ -65,7 +67,7 @@ export async function handleCallbacks(bot: Bot<MyContext>, supabase: ActSupabase
     });
     bot.callbackQuery("delete-link", async (ctx) => {
         const userId = ctx.from!.id!;
-        const linkId = activeLinkRecord[userId];
+        const linkId = activeLinkRecord.get(userId);
         if (!linkId) {
             return ctx.reply("No active link");
         }

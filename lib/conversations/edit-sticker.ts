@@ -10,8 +10,8 @@ type MyConversation = Conversation<MyContext>;
 
 export async function editSticker(conversation: MyConversation, ctx: MyContext, supabase: ActSupabaseClient, bot: Bot<MyContext>) {
 	const userId = ctx.from?.id!;
-	const projectId = activeProjectRecord[userId];
-	isInConversationRecord[userId] = true;
+	const projectId = activeProjectRecord.get(userId);
+	isInConversationRecord.set(userId, true);
 
 	if (!projectId) {
 		return ctx.reply("No active project");

@@ -30,7 +30,7 @@ export async function startCommand(bot: Bot<MyContext>, supabase: ActSupabaseCli
             if (type === "edit" && id) {
                 const link = await getLink(id, supabase);
                 if (link) {
-                    activeLinkRecord[ctx.from?.id!] = link.link_id;
+                    activeLinkRecord.set(ctx.from?.id!, link.link_id);
                     let message = `<b>Manage Link</b>\n\n`;
                     message += `Title: <code>${link.title}</code>\n`;
                     message += `Description: <code>${link.description}</code>\n`;
@@ -42,10 +42,10 @@ export async function startCommand(bot: Bot<MyContext>, supabase: ActSupabaseCli
             } else if (type === "project" && id) {
                 const project = await getProject(id, userId, supabase);
                 if (project) {
-                    activeProjectRecord[ctx.from?.id!] = project.project_id;
+                    activeProjectRecord.set(ctx.from?.id!, project.project_id);
                     const message = await createProjectMessage(project, bot, supabase);
                     const msg = await ctx.reply(message, { parse_mode: "HTML", link_preview_options: { is_disabled: true }, reply_markup: projectMenu });
-                    projectMessageIdRecord[ctx.from?.id!] = msg.message_id;
+                    projectMessageIdRecord.set(ctx.from?.id!, msg.message_id);
                 }
             }
             return;

@@ -14,7 +14,7 @@ export async function replyToMessages(bot: Bot<MyContext>, supabase: ActSupabase
         if (!replyMessage) return;
 
         let type: EditLinkType | undefined;
-        const linkId = activeLinkRecord[ctx.from?.id!];
+        const linkId = activeLinkRecord.get(ctx.from?.id!);
 
         // Determine the type of edit based on the reply message text
         if (replyMessage.text?.includes("Please provide the new title for the link.")) {
@@ -37,7 +37,7 @@ export async function replyToMessages(bot: Bot<MyContext>, supabase: ActSupabase
         await ctx.deleteMessage();
 
         try {
-            await editLink(linkId, type, message.text!, supabase);
+            await editLink(linkId as number, type, message.text!, supabase);
             const successMsg =await ctx.reply(`✅ Successfully updated!`);
             // Delete the message after 5 seconds
             setTimeout(async () => {
